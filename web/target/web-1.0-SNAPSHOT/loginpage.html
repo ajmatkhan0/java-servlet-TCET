@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <style>      /* Apply background and font */
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #74ebd5, #ACB6E5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      
+       
+
+      /* Form container styling */
+      form {
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        width: 320px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 25px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+      }
+
+      input[type="text"]:focus,
+      input[type="password"]:focus {
+        border-color: #74ebd5;
+        outline: none;
+      }
+
+      input[type="submit"] {
+        width: 100%;
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #5ac6c0;
+      }
+    </style>
+
+        
+    </head>
+    <body>
+        <div>
+            <form method="post" action="loginserv"> 
+            
+             <label for="username">User Name:</label>
+      <input type="text" id="username" name="Username" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="Password" required>
+
+      <input type="submit" value="Sign Up">
+            </form>
+        </div>
+    </body>
+</html>
