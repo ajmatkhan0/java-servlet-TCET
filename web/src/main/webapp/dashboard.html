@@ -2,7 +2,7 @@
 <!--
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
+
 <html>
     <head>
         <title>TODO supply a title</title>
@@ -10,6 +10,255 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div>HELLOOO</div>
-    </body>
+    </body>-->
+</html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard</title>
+  <style>
+    :root{
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #4f46e5;
+      --accent-2: #06b6d4;
+      --radius: 12px;
+      --glass: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter, Roboto, system-ui, Arial; background:linear-gradient(180deg,var(--bg),#e9eef9); color:#111827;
+      min-height:100vh; display:flex; flex-direction:column;
+    }
+
+    /* Topbar */
+    header{
+      height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:white; box-shadow:0 1px 0 rgba(16,24,40,0.04);
+    }
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:flex; align-items:center; justify-content:center; color:white; font-weight:700}
+    .title{font-size:16px; font-weight:600}
+
+    /* Layout */
+    .container{display:grid; grid-template-columns:240px 1fr; gap:20px; padding:20px; align-items:start}
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr; padding:12px}
+    }
+
+    /* Sidebar */
+    nav{background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    nav a{display:block; padding:10px 12px; color:var(--muted); text-decoration:none; border-radius:8px; margin-bottom:6px}
+    nav a.active{background:linear-gradient(90deg, rgba(79,70,229,0.08), rgba(6,182,212,0.06)); color:var(--accent)}
+
+    /* Main */
+    main{min-height:60vh}
+    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:18px}
+    @media (max-width:900px){.grid{grid-template-columns:repeat(1,1fr)}}
+
+    .card{background:var(--card); border-radius:12px; padding:18px; box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    .card h3{margin:0 0 8px 0; font-size:14px; color:var(--muted)}
+    .stat{font-size:26px; font-weight:700}
+    .muted{color:var(--muted); font-size:13px}
+
+    /* Table */
+    table{width:100%; border-collapse:collapse}
+    th, td{padding:12px 10px; text-align:left; font-size:14px}
+    thead th{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em}
+    tbody tr{background:linear-gradient(180deg,#fff, #fbfdff); border-radius:8px}
+    tbody tr + tr{margin-top:8px}
+    .actions a{margin-right:8px; text-decoration:none; color:var(--accent)}
+
+    /* Small helpers */
+    .right{display:flex; gap:8px; align-items:center}
+    .btn{padding:8px 12px; border-radius:8px; background:var(--accent); color:white; border:none; cursor:pointer}
+    .btn.secondary{background:transparent; color:var(--accent); border:1px solid rgba(79,70,229,0.12)}
+    .search{width:260px; padding:8px 12px; border-radius:10px; border:1px solid #e6eef8}
+    @media (max-width:900px){.search{width:100%}}
+
+    footer{padding:12px 20px; color:var(--muted); font-size:13px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">A</div>
+      <div>
+        <div class="title">MyApp Dashboard</div>
+        <div class="muted" style="font-size:12px">Manage users, uploads & files</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <input class="search" id="q" placeholder="Search files or users..." />
+      <button class="btn" id="refreshBtn">Refresh</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav>
+      <a href="#" class="active">Overview</a>
+      <a href="#files">Files</a>
+      <a href="#users">Users</a>
+      <a href="#settings">Settings</a>
+      <hr style="margin:12px 0; border:none; height:1px; background:#eef3ff">
+      <a href="upload.html">Upload PDF</a>
+      <a href="ListFilesServlet">View All PDFs</a>
+    </nav>
+
+    <main>
+      <!-- Top stats -->
+      <section class="grid">
+        <div class="card">
+          <h3>Total Users</h3>
+          <div class="stat" id="totalUsers">--</div>
+          <div class="muted">Registered users in the system</div>
+        </div>
+
+        <div class="card">
+          <h3>Total PDFs</h3>
+          <div class="stat" id="totalFiles">--</div>
+          <div class="muted">PDF files stored in database</div>
+        </div>
+
+        <div class="card">
+          <h3>Storage Used</h3>
+          <div class="stat" id="storageUsed">--</div>
+          <div class="muted">Approximate total bytes</div>
+        </div>
+      </section>
+
+      <!-- Recent uploads -->
+      <section class="card" id="files">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+          <h2 style="margin:0">Recent Uploads</h2>
+          <div class="right">
+            <button class="btn secondary" id="downloadCsv">Export CSV</button>
+            <button class="btn" id="uploadBtn" onclick="location.href='upload.html'">Upload PDF</button>
+          </div>
+        </div>
+
+        <div style="overflow:auto">
+          <table id="filesTable">
+            <thead>
+              <tr>
+                <th>Filename</th>
+                <th>Size</th>
+                <th>Uploaded At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- quick users card -->
+      <section class="card" id="users" style="margin-top:16px">
+        <h2 style="margin:0 0 12px 0">Recent Users</h2>
+        <div id="recentUsers">--</div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>Built with Java Servlets • Tip: implement endpoints <code>/api/stats</code> and <code>/api/files</code> to feed this dashboard</footer>
+
+  <script>
+    /*
+      Dashboard JS notes:
+      - By default this page will try to fetch JSON from /api/stats and /api/files.
+      - If you don't have those endpoints yet, implement simple servlets that return JSON:
+
+      /api/stats (GET) -> { totalUsers: 10, totalFiles: 23, storageUsed: 1234567 }
+      /api/files  (GET) -> [{id:1, filename:'doc.pdf', file_size:12345, uploaded_at:'2025-06-13T12:34:56Z'}, ...]
+
+      Example servlet snippets were added inside the dashboard file as comments.
+    */
+
+    async function fetchJson(url){
+      try{
+        const res = await fetch(url, {cache:'no-store'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        return await res.json();
+      }catch(err){
+        console.warn('Fetch failed for', url, err);
+        return null;
+      }
+    }
+
+    function humanFileSize(bytes){
+      if(bytes === 0) return '0 B';
+      const sizes = ['B','KB','MB','GB','TB'];
+      const i = Math.floor(Math.log(bytes)/Math.log(1024));
+      return +(bytes/Math.pow(1024,i)).toFixed(2) + ' ' + sizes[i];
+    }
+
+    function renderFiles(files){
+      const tbody = document.querySelector('#filesTable tbody');
+      tbody.innerHTML = '';
+      if(!files || files.length===0){
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:14px; color:var(--muted)">No files found</td></tr>';
+        return;
+      }
+      for(const f of files){
+        const tr = document.createElement('tr');
+        const name = document.createElement('td'); name.textContent = f.filename;
+        const size = document.createElement('td'); size.textContent = humanFileSize(f.file_size||0);
+        const at = document.createElement('td'); at.textContent = (new Date(f.uploaded_at||'')).toLocaleString();
+        const actions = document.createElement('td'); actions.className='actions';
+        const view = document.createElement('a'); view.href = 'DownloadPdfServlet?id='+encodeURIComponent(f.id); view.textContent = 'View'; view.target='_blank';
+        actions.appendChild(view);
+        tr.appendChild(name); tr.appendChild(size); tr.appendChild(at); tr.appendChild(actions);
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function loadDashboard(){
+      // Try /api/stats first. If missing, try /stats (fallback)
+      const stats = await fetchJson('/api/stats') || await fetchJson('/stats');
+      if(stats){
+        document.getElementById('totalUsers').textContent = stats.totalUsers ?? '--';
+        document.getElementById('totalFiles').textContent = stats.totalFiles ?? '--';
+        document.getElementById('storageUsed').textContent = stats.storageUsed ? humanFileSize(stats.storageUsed) : '--';
+      }
+
+      const files = await fetchJson('/api/files') || await fetchJson('/files') || await fetchJson('/ListFilesServlet');
+      // If files endpoint returns HTML (ListFilesServlet default), try to parse JSON inside — but most likely it will return JSON.
+      if(files && Array.isArray(files)){
+        renderFiles(files);
+      } else {
+        // fallback: if /ListFilesServlet returns HTML, we can't parse it reliably here. Show message.
+        document.querySelector('#filesTable tbody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:14px; color:var(--muted)">No JSON files endpoint found. Implement <code>/api/files</code> that returns JSON or update the dashboard to parse your HTML.</td></tr>';
+      }
+
+      // recent users (optional)
+      if(stats && stats.recentUsers){
+        const ru = document.getElementById('recentUsers');
+        ru.innerHTML = stats.recentUsers.map(u => '<div style="padding:8px 0; border-bottom:1px solid #f1f5f9">'+(u.firstname||u.username||'User')+' • <span class="muted">'+(new Date(u.registered_at).toLocaleString()||'')+'</span></div>').join('');
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadDashboard);
+    document.getElementById('downloadCsv').addEventListener('click', ()=>{
+      // export table to CSV
+      const rows = Array.from(document.querySelectorAll('#filesTable tbody tr'));
+      const csv = [];
+      for(const r of rows){
+        const cols = Array.from(r.querySelectorAll('td')).map(td=>'"'+(td.textContent||'').replace(/"/g,'""')+'"');
+        if(cols.length) csv.push(cols.join(','));
+      }
+      const blob = new Blob([csv.join('\n')], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'files.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // initial load
+    loadDashboard();
+  </script>
+</body>
 </html>
